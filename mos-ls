@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec find ~/.mariadb-over-ssh.d -type f -printf '%P\n'

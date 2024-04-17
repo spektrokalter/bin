@@ -1,0 +1,3 @@
+#!/bin/sh
+
+machinectl -o json list-images "$@" | jq --raw-output '.[].name'

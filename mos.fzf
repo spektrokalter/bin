@@ -1,0 +1,5 @@
+#!/bin/bash
+
+read -r conf < <(mos-ls | fzf)
+
+exec mos "$conf" "$@"

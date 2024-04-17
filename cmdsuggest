@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -o errexit -o nounset -o pipefail
+
+. ~/.cmdsuggestrc
+
+temp="$(mktemp)"
+trap 'rm -- "$temp"' EXIT
+
+cat >"$temp"
+run_cmdsuggest "$temp"

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -o errexit -o nounset -o pipefail
+
+SSH_DEST="$1"
+LOCAL_PORT="$2"
+
+exec systemd-run \
+	--user \
+	--unit "ssh-D@${LOCAL_PORT}.service" \
+	-E SSH_AUTH_SOCK \
+	-p Restart=on-failure \
+	-p RestartSec=5s \
+	ssh \
+		-N \
+		-D "$LOCAL_PORT" \
+		"$SSH_DEST"

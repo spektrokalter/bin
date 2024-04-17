@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -o errexit -o nounset -o pipefail
+
+. ~/.deprc
+git rev-parse --git-dir >/dev/null 2>&1
+short="$(git symbolic-ref -q --short HEAD)"
+prefix="$(dep_prefix "$PWD" "$short")"
+printf 'prefix: %s\n' "$prefix"
+for file; do
+	scp -- "$file" "$prefix/$file"
+done

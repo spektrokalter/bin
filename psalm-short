@@ -1,0 +1,8 @@
+#!/bin/sh
+
+exec psalm \
+	--show-snippet=false \
+	--monochrome \
+	--output-format=text \
+	--no-progress \
+	"$@"

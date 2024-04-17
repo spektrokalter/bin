@@ -1,0 +1,4 @@
+#!/bin/sh
+
+find ~/.password-store -path '*.gpg' -printf '%P\n' |\
+	sed 's/\.gpg$//'

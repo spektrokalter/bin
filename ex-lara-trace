@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec jq --raw-output '.trace|map("e! +\(.line) \(.file)")[]'
