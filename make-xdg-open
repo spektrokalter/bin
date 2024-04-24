@@ -1,8 +1,0 @@
-#!/bin/bash
-
-temp="$(mktemp "--suffix=$1")"
-cat >"$temp"
-cat <<-EOF
-	xdg-open ${temp@Q}
-	rm       ${temp@Q}
-EOF
