@@ -1,3 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 
-systemctl -o json "$@" list-units | jq --raw-output '.[].unit'
+OTPS=() ARGS=()
+
+for arg in "$@"; do
+	if [[ "$arg" == '--' ]]; then
+		for arg in "$@"; do
+			ARGS+=("$arg")
+			shift
+		done
+		break
+	elif [[ "$arg" =~ ^- ]]; then
+		OPTS+=("$arg")
+		shift
+	else
+		ARGS+=("$arg")
+		shift
+	fi
+done
+
+systemctl -o json "${OPTS[@]}" list-units "${ARGS[@]}" | jq --raw-output '.[].unit'
