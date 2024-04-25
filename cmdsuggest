@@ -3,7 +3,7 @@
 set -o errexit -o nounset -o pipefail
 
 if rc="$HOME/.cmdsuggestrc"; [[ ! -f "$rc" || ! -r "$rc" ]]; then
-	printf 'bad %s\n' "$rc"
+	printf 'bad %s\n' "$rc" >&2
 	exit 1
 fi
 
