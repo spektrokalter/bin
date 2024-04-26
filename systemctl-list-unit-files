@@ -1,0 +1,23 @@
+#!/bin/bash
+
+opts=() args=()
+
+for arg in "$@"; do
+	if [[ "$arg" == '--' ]]; then
+		for arg in "$@"; do
+			args+=("$arg")
+			shift
+		done
+		break
+	fi
+
+	if [[ "$arg" =~ ^- ]]; then
+		opts+=("$arg")
+	else
+		args+=("$arg")
+	fi
+	shift
+done
+
+systemctl -o json "${opts[@]}" list-unit-files "${args[@]}" \
+| jq --raw-output '.[].unit_file'
