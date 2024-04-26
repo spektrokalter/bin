@@ -1,0 +1,88 @@
+#!/bin/bash
+
+set -o errexit -o nounset -o pipefail
+
+build_request() {
+	local file
+	file="$(mktemp)"
+
+	cat >"$file" <<-'EOF'
+		{
+			"model": "gpt-3.5-turbo",
+			"messages": []
+		}
+	EOF
+
+	_add_message() {
+		local role="$1" content="$2"
+
+		jq \
+			--arg 'role' "$role" \
+			--arg 'content' "$content" \
+			'.messages += [{"role": $role, "content": $content}]' \
+		<"$file" \
+		| sponge -- "$file"
+	}
+
+	local role='' content=''
+
+	local s
+	while IFS= read -r s; do
+		if [[ "$s" =~ ^[^[:blank:]] ]]; then
+			if [[ "$role" ]]; then
+				_add_message "$role" "$content"
+				content=''
+			fi
+			read -r role <<<"$s"
+			continue
+		fi
+
+		content+="${s#$'\t'}"$'\n'
+	done
+
+	if [[ "$role" ]]; then
+		_add_message "$role" "$content"
+	fi
+
+	cat -- "$file"
+	rm -- "$file"
+}
+
+CURL=(/usr/bin/curl --silent --fail)
+
+if rc="$HOME/.chatgptrc"; [[ -f "$rc" && -r "$rc" ]]; then
+	source -- "$rc"
+fi
+
+request="$(mktemp)" response="$(mktemp)"
+trap 'rm -- "$request" "$response"' EXIT
+
+build_request >"$request"
+
+"${CURL[@]}" \
+	-H "Authorization: Bearer $OPENAI_API_KEY" \
+	--json "@$request" \
+	'https://api.openai.com/v1/chat/completions' \
+>"$response"
+
+len="$(jq '.choices | length' <"$response")"
+
+for (( i=0; i < len; ++i )); do
+	printf '\n'
+
+	jq \
+		--raw-output \
+		--arg i "$i" \
+		'.choices[$i|tonumber].message.role' \
+	<"$response"
+
+	printf '\n'
+
+	jq \
+		--raw-output \
+		--arg i "$i" \
+		'.choices[$i|tonumber].message.content' \
+	<"$response" \
+	| fmt --split-only \
+	| sed 's/^./	&/'
+done
