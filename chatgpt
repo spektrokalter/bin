@@ -9,7 +9,7 @@ build_request() {
 	cat >"$file" <<-'EOF'
 		{
 			"model": "gpt-3.5-turbo",
-			"messages": []
+			"n": 1
 		}
 	EOF
 
@@ -65,24 +65,18 @@ build_request >"$request"
 	'https://api.openai.com/v1/chat/completions' \
 >"$response"
 
-len="$(jq '.choices | length' <"$response")"
+printf '\n'
 
-for (( i=0; i < len; ++i )); do
-	printf '\n'
+jq \
+	--raw-output \
+	'.choices[0].message.role' \
+<"$response"
 
-	jq \
-		--raw-output \
-		--arg i "$i" \
-		'.choices[$i|tonumber].message.role' \
-	<"$response"
+printf '\n'
 
-	printf '\n'
-
-	jq \
-		--raw-output \
-		--arg i "$i" \
-		'.choices[$i|tonumber].message.content' \
-	<"$response" \
-	| fmt --split-only \
-	| sed 's/^./	&/'
-done
+jq \
+	--raw-output \
+	'.choices[0].message.content' \
+<"$response" \
+| fmt --split-only \
+| sed 's/^./	&/'
