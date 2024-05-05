@@ -1,4 +1,4 @@
 #!/bin/sh
 
 MANPAGER='vim +MANPAGER "+so ~/.vimrc.manpager" --not-a-term -' \
-man "$@"
+exec man "$@"
