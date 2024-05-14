@@ -1,21 +1,21 @@
 #!/bin/bash
 
-OPTS=() ARGS=()
+opts=() args=()
 
 for arg in "$@"; do
 	if [[ "$arg" == '--' ]]; then
 		for arg in "$@"; do
-			ARGS+=("$arg")
+			args+=("$arg")
 			shift
 		done
 		break
 	elif [[ "$arg" =~ ^- ]]; then
-		OPTS+=("$arg")
+		opts+=("$arg")
 		shift
 	else
-		ARGS+=("$arg")
+		args+=("$arg")
 		shift
 	fi
 done
 
-systemctl -o json "${OPTS[@]}" list-units "${ARGS[@]}" | jq --raw-output '.[].unit'
+systemctl -o json "${opts[@]}" list-units "${args[@]}" | jq --raw-output '.[].unit'
