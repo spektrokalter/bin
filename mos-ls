@@ -1,3 +1,0 @@
-#!/bin/bash
-
-exec find ~/.mos.sh.d -type f -printf '%P\n'
