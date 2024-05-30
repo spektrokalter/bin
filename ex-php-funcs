@@ -1,0 +1,6 @@
+#!/bin/awk -f
+
+/function +[a-zA-Z_]+\(/ {
+	split($0, a, "(")
+	print "/function."b[split(a[1], b)]
+} 
