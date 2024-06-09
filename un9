@@ -1,0 +1,5 @@
+#!/bin/sh
+
+PATH="${PATH#/usr/lib/plan9/bin:}"
+
+exec "$@"
