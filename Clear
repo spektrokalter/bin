@@ -1,0 +1,4 @@
+#!/bin/sh
+
+printf ',' | 9p write "acme/$winid/addr"
+printf ''  | 9p write "acme/$winid/data"
