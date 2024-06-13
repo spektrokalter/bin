@@ -1,0 +1,8 @@
+#!/bin/sh
+
+temp="$(mktemp --suffix=.go)"
+trap 'rm -- "$temp"' EXIT
+
+cat >"$temp"
+cat <"$temp"
+go run "$temp"
