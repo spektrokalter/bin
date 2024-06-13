@@ -4,5 +4,5 @@ temp="$(mktemp)"
 trap 'rm -- "$temp"' EXIT
 
 cat >"$temp"
-cat -- "$temp"
+cat <"$temp"
 "$@" <"$temp"
